@@ -1,0 +1,136 @@
+1. https://stackoverflow.com/questions/76279791/jenkins-pipeline-from-scp-throws-stderr-fatal-not-in-a-git-directory
+2. downgrade Java version 25
+https://grafana.com/grafana/dashboards/9964-jenkins-performance-and-health-overview/
+
+Started by user admin devops
+[Pipeline] Start of Pipeline
+[Pipeline] node
+Running on Jenkins in /var/jenkins_home/workspace/test-git-2
+[Pipeline] {
+[Pipeline] stage
+[Pipeline] { (Checkout)
+[Pipeline] echo
+Checking out Spring PetClinic source code...
+[Pipeline] git
+Selected Git installation does not exist. Using Default
+The recommended git tool is: NONE
+No credentials specified
+Cloning the remote Git repository
+Cloning repository https://github.com/cuviengchai/spring-petclinic-devops.git
+
+git init /var/jenkins_home/workspace/test-git-2 # timeout=10
+Fetching upstream changes from https://github.com/cuviengchai/spring-petclinic-devops.git
+git --version # timeout=10
+git --version # 'git version 2.47.3'
+git fetch --tags --force --progress -- https://github.com/cuviengchai/spring-petclinic-devops.git +refs/heads/:refs/remotes/origin/ # timeout=10
+ERROR: Error cloning remote repo 'origin'
+hudson.plugins.git.GitException: Command "git fetch --tags --force --progress -- https://github.com/cuviengchai/spring-petclinic-devops.git +refs/heads/:refs/remotes/origin/" returned status code 128:
+stdout:
+stderr: fatal: detected dubious ownership in repository at '/var/jenkins_home/workspace/test-git-2'
+To add an exception for this directory, call:
+
+ERROR: Error cloning remote repo 'origin'
+ERROR: Maximum checkout retry attempts reached, aborting
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (View Project Structure)
+Stage "View Project Structure" skipped due to earlier failure(s)
+[Pipeline] getContext
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] }
+[Pipeline] // node
+[Pipeline] End of Pipeline
+ERROR: Error cloning remote repo 'origin'
+Finished: FAILURE
+
+----
+This is a Git security issue. The error "detected dubious ownership in repository" occurs because Git is running inside a Docker container with different user permissions. Here's how to fix it:
+
+Solution 1: Add Git safe directory configuration to Jenkins
+Add an initialization script to your Jenkins container. Update your docker-compose.yml:
+
+Solution 1: Add Git safe directory configuration to Jenkins
+Add an initialization script to your Jenkins container. Update your docker-compose.yml:
+
+networks:
+  jenkins:
+    driver: bridge
+
+services:
+  docker:
+    image: docker:dind
+    container_name: jenkins-docker
+    restart: unless-stopped
+    privileged: true
+    networks:
+      jenkins:
+        aliases:
+          - docker
+    environment:
+      - DOCKER_TLS_CERTDIR=/certs
+    volumes:
+      - ./jenkins-docker-certs:/certs/client
+      - ./jenkins-data:/var/jenkins_home
+    ports:
+      - "2376:2376"
+    command: --storage-driver overlay2
+
+  jenkins:
+    image: jenkins/jenkins:2.533-jdk21
+    container_name: jenkins-blueocean
+    restart: unless-stopped
+    networks:
+      - jenkins
+    environment:
+      - DOCKER_HOST=tcp://docker:2376
+      - DOCKER_CERT_PATH=/certs/client
+      - DOCKER_TLS_VERIFY=1
+      - JAVA_OPTS=-Duser.timezone=America/New_York
+    volumes:
+      - ./jenkins-data:/var/jenkins_home
+      - ./jenkins-docker-certs:/certs/client:ro
+    ports:
+      - "8080:8080"
+      - "50000:50000"
+    depends_on:
+      - docker
+    user: root
+
+Solution 2: Quick fix using Pipeline script
+Update your Jenkinsfile to configure Git before checkout:
+
+pipeline {
+    agent any
+    
+    stages {
+        stage('Setup Git') {
+            steps {
+                echo 'Configuring Git safe directory...'
+                sh 'git config --global --add safe.directory "*"'
+            }
+        }
+        
+        stage('Checkout') {
+            steps {
+                echo 'Checking out Spring PetClinic source code...'
+                git branch: 'main', url: 'https://github.com/cuviengchai/spring-petclinic-devops.git'
+            }
+        }
+        
+        stage('View Project Structure') {
+            steps {
+                echo 'Displaying project structure...'
+                sh 'ls -la'
+                sh 'pwd'
+            }
+        }
+    }
+}
+
+Solution 3: Restart Jenkins with user: root
+Stop Jenkins: docker-compose down
+Add user: root to the jenkins service in docker-compose.yml (as shown above)
+Start Jenkins: docker-compose up -d
+The user: root solution is the quickest fix for this permission issue in a development environment.

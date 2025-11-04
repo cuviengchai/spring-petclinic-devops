@@ -46,3 +46,8 @@ out/
 _site/
 *.css
 !petclinic.css
+
+jenkins/docker/grafana/grafana_data/*
+jenkins/docker/jenkins/jenkins-data/*
+jenkins/docker/jenkins/jenkins-docker-certs/*
+jenkins/docker/prometheus/prometheus_data/*
