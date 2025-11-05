@@ -8,14 +8,14 @@ This guide provides step-by-step instructions for setting up Jenkins for the fir
 
 ## Table of Contents
 
-1. [Starting Jenkins with Docker Compose](#starting-jenkins-with-docker-compose)
-2. [Initial Jenkins Setup](#initial-jenkins-setup)
-3. [Plugin Installation](#plugin-installation)
-4. [Creating Admin User](#creating-admin-user)
-5. [Jenkins URL Configuration](#jenkins-url-configuration)
-6. [Setup Completion](#setup-completion)
-7. [Creating Your First Pipeline](#creating-your-first-pipeline)
-8. [Troubleshooting](#troubleshooting)
+1. [Overview](#overview)
+2. [Starting Jenkins with Docker Compose](#starting-jenkins-with-docker-compose)
+3. [Initial Jenkins Setup](#initial-jenkins-setup)
+4. [Plugin Installation](#plugin-installation)
+5. [Creating Admin User](#creating-admin-user)
+6. [Jenkins URL Configuration](#jenkins-url-configuration)
+7. [Setup Completion](#setup-completion)
+8. [Creating Your First Pipeline](#creating-your-first-pipeline)
 
 ---
 
