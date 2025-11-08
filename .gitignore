@@ -51,3 +51,6 @@ jenkins/docker/grafana/grafana_data/*
 jenkins/docker/jenkins/jenkins-data/*
 jenkins/docker/jenkins/jenkins-docker-certs/*
 jenkins/docker/prometheus/prometheus_data/*
+jenkins/docker/sonar/sonarqube_data/*
+jenkins/docker/sonar/sonarqube_extensions/*
+jenkins/docker/sonar/sonarqube_logs/*
