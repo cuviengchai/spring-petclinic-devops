@@ -24,46 +24,13 @@ pipeline {
             }
         }
 
-    //     stage('Build Docker Image') {
-    //         steps {
-    //             script {
-    //                 echo 'Building Spring Boot base image with Java 21...'
-    //                 sh 'docker build -t spring-base .'
-    //             }
-    //         }
-    //     }
-
-    //     stage('Build Application') {
-    //         steps {
-    //             script {
-    //                 echo 'Building application in container...'
-    //                 sh '''
-    //                     docker run --rm \
-    //                         -v "${WORKSPACE}":/app \
-    //                         -w /app \
-    //                         -e JAVA_HOME=/opt/java/openjdk \
-    //                         spring-base \
-    //                         /bin/bash -c "./gradlew clean build --no-daemon --no-build-cache -x checkstyleNohttp"
-    //                 '''
-    //             }
-    //         }
-    //     }
-
-    //     stage('Archive Artifacts') {
-    //         steps {
-    //             script {
-    //                 echo 'Archiving build artifacts...'
-    //                 archiveArtifacts artifacts: 'build/libs/*.jar', fingerprint: true
-    //             }
-    //         }
-    //     }
-    // }
-
-    stage('Build Application') {
-        steps {
-            sh './gradlew clean build --no-daemon --no-build-cache -x checkstyleNohttp'
+        stage('Build Application') {
+            steps {
+                sh './gradlew clean build --no-daemon --no-build-cache -x checkstyleNohttp'
+            }
         }
     }
+
     post {
         always {
             echo 'Pipeline completed'
@@ -74,6 +41,5 @@ pipeline {
         failure {
             echo 'Build failed!'
         }
-    }
     }
 }
