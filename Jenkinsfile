@@ -27,7 +27,8 @@ pipeline {
     stage('Build') {
       steps {
         echo 'Building Spring PetClinic application...'
-        sh './gradlew clean build'
+        // sh './gradlew clean build'
+        sh './mvnw spring-boot:run'
       }
     }
   }
