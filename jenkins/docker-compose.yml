@@ -17,12 +17,13 @@ services:
     volumes:
       - ./docker/jenkins/jenkins-docker-certs:/certs/client
       - ./docker/jenkins/jenkins-data:/var/jenkins_home
+      - ../:/workspace # for local test only
     ports:
       - "2376:2376"
     command: --storage-driver overlay2
 
   jenkins:
-    image: jenkins/jenkins:2.533-jdk21
+    build: ./docker/jenkins
     container_name: jenkins
     restart: unless-stopped
     networks:
@@ -34,6 +35,8 @@ services:
     volumes:
       - ./docker/jenkins/jenkins-data:/var/jenkins_home
       - ./docker/jenkins/jenkins-docker-certs:/certs/client:ro
+      - /var/run/docker.sock:/var/run/docker.sock 
+      - ../:/workspace
     ports:
       - "8080:8080"
       - "50000:50000"
