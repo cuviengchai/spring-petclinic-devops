@@ -264,6 +264,77 @@ In the build details page, you can:
 
 ---
 
+# Setting up the spring project build
+
+## Step 1: Create a multi branch pipeline
+![Multi Branch](pic/jenkins/spring/spring-multi-branch.png)
+
+## Step 2: Configure the pipeline
+- Paste the repository link
+![Config](pic/jenkins/spring/spring-config.png)
+
+## Step 3: Jenkins Scan
+- Jenkins will scan the repository and find the Jenkinsfile
+![Scan](pic/jenkins/spring/spring-scan.png)
+
+## Step 4: Build the project
+- Jenkins will automatically fetch the code and build the project based on the Jenkinsfile
+- The building process is slow since jenkins automatically does rate limiting for Github access
+![Build](pic/jenkins/spring/spring-build.png)
+- Current jenkinsFile
+```groovy
+pipeline {
+    agent any
+
+    stages {
+        stage('Setup Git') {
+            steps {
+                echo 'Configuring Git safe directory...'
+                sh 'git config --global --add safe.directory "*"'
+            }
+        }
+
+        stage('Checkout') {
+            steps {
+                echo 'Checking out Spring PetClinic source code...'
+                git branch: 'develop', url: 'https://github.com/cuviengchai/spring-petclinic-devops.git'
+            }
+        }
+
+        stage('View Project Structure') {
+            steps {
+                echo 'Displaying project structure...'
+                sh 'ls -la'
+                sh 'pwd'
+            }
+        }
+
+        stage('Build Application') {
+            steps {
+                sh './gradlew clean build --no-daemon --no-build-cache -x checkstyleNohttp'
+            }
+        }
+    }
+
+    post {
+        always {
+            echo 'Pipeline completed'
+        }
+        success {
+            echo 'Build completed successfully!'
+        }
+        failure {
+            echo 'Build failed!'
+        }
+    }
+}
+```
+
+## Step 4.1: Testing the jenkinsfile modification
+- If we were to modify the Jenkinsfile, we can create a pipeline item and paste the modified Jenkinsfile there to test it out
+
+
+
 ## Additional Resources
 
 - [Official Jenkins Documentation](https://www.jenkins.io/doc/)
