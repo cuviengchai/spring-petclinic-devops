@@ -1,0 +1,86 @@
+networks:
+  devops:
+    driver: bridge
+
+services:
+  docker:
+    image: docker:dind
+    container_name: jenkins-docker
+    restart: unless-stopped
+    privileged: true
+    networks:
+      devops:
+        aliases:
+          - docker
+    environment:
+      - DOCKER_TLS_CERTDIR=/certs
+    volumes:
+      - ./docker/jenkins/jenkins-docker-certs:/certs/client
+      - ./docker/jenkins/jenkins-data:/var/jenkins_home
+    ports:
+      - "2376:2376"
+    command: --storage-driver overlay2
+
+  jenkins:
+    image: jenkins/jenkins:lts-jdk21
+    container_name: jenkins
+    restart: unless-stopped
+    networks:
+      - devops
+    environment:
+      - DOCKER_HOST=tcp://docker:2376
+      - DOCKER_CERT_PATH=/certs/client
+      - DOCKER_TLS_VERIFY=1
+    volumes:
+      - ./docker/jenkins/jenkins-data:/var/jenkins_home
+      - ./docker/jenkins/jenkins-docker-certs:/certs/client:ro
+    ports:
+      - "8080:8080"
+      - "50000:50000"
+    depends_on:
+      - docker
+
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    restart: unless-stopped
+    networks:
+      - devops
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./docker/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+      - ./docker/prometheus/prometheus_data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+    user: "nobody"
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    restart: unless-stopped
+    networks:
+      - devops
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+    volumes:
+      - ./docker/grafana/grafana_data:/var/lib/grafana
+      - ./docker/grafana/datasources.yml:/etc/grafana/provisioning/datasources/datasources.yml
+    depends_on:
+      - prometheus
+
+  zap:
+    image: ghcr.io/zaproxy/zaproxy:stable
+    container_name: zap
+    restart: unless-stopped
+    command: zap.sh -daemon -host 0.0.0.0 -port 8080 -config api.addrs.addr.name=.* -config api.addrs.addr.regex=true -config api.disablekey=true
+    networks:
+      - devops
+    ports:
+      - "8090:8080"
+    volumes:
+      - ./zap:/zap/wrk
