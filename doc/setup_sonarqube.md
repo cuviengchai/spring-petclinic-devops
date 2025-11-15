@@ -133,13 +133,36 @@ flowchart TB
 
 ## Initial Setup and Configuration
 
-### Step 2: Reset Default Password
+### Step 2: Automated Setup (Recommended)
+
+For a quick automated setup, use the provided setup script:
+
+1. **Navigate to Jenkins directory:**
+
+   ```bash
+   cd jenkins/
+   ```
+
+2. **Run the automated setup script:**
+
+   ```bash
+   ./setup-sonarqube.sh
+   ```
+
+   This script will:
+   - Wait for SonarQube to be ready
+   - Use default credentials (`admin`/`qazxswedcR@1`)
+   - Automatically generate a Jenkins token
+   - Provide configuration instructions
+
+### Step 2 (Alternative): Manual Setup
 
 ![Reset Password](pic/sonarqube/2_reset_password.png)
 
 1. **Change Default Password:**
    - On first login, you'll be prompted to change the default password
-   - Enter a new secure password
+   - Default credentials: `admin`/`admin`
+   - Enter a new secure password (e.g., `qazxswedcR@1`)
    - Confirm the password change
    - Login with the new credentials
 
@@ -151,7 +174,9 @@ flowchart TB
 
 ![Generate Token](pic/sonarqube/3_generate_token.png)
 
-1. **Generate User Token:**
+**If using automated setup, skip this step** - the script creates the token automatically.
+
+1. **Generate User Token (Manual method):**
    - Go to User Account → Security
    - In the "Tokens" section, enter a token name (e.g., `jenkins-integration`)
    - Click "Generate"
@@ -286,14 +311,76 @@ After successful analysis, you can view:
    - Find "SonarQube servers" section
    - Add SonarQube server:
      - **Name**: `SonarQube`
-     - **Server URL**: `http://localhost:9000`
-     - **Server authentication token**: Add the token generated earlier
+     - **Server URL**: `http://sonarqube:9000` (for Docker network)
+     - **Server authentication token**: Select the credential created earlier
 
 3. **Configure Scanner Tool:**
    - Go to Manage Jenkins → Global Tool Configuration
    - Find "SonarQube Scanner" section
    - Add SonarQube Scanner installation
    - Choose "Install automatically" or specify installation directory
+
+4. **Add Jenkins Credential for SonarQube Token:**
+   - Go to Manage Jenkins → Credentials
+   - Add new "Secret Text" credential:
+     - **Secret**: The token from setup script (e.g., `squ_8c3dedd2826e7e23b988bdeeb75d9e543155a53e`)
+     - **ID**: `sonar-token`
+     - **Description**: `SonarQube Authentication Token`
+
+5. **Configure Webhook (Optional):**
+   Run the webhook setup script for quality gate integration:
+
+   ```bash
+   cd jenkins/
+   ./setup-sonarqube-webhook.sh
+   ```
+
+   This creates a webhook that notifies Jenkins when SonarQube analysis completes.
+
+---
+
+## Jenkinsfile Integration
+
+The project includes SonarQube integration in the Jenkins pipeline:
+
+```groovy
+stage('SonarQube Analysis') {
+    steps {
+        withSonarQubeEnv('SonarQube') {
+            sh './gradlew sonar -Dsonar.projectKey=devops-team2 -Dsonar.projectName=devops-team2 -Dsonar.host.url=http://sonarqube:9000 -Dsonar.token=******'
+        }
+    }
+}
+
+stage('Quality Gate') {
+    steps {
+        timeout(time: 5, unit: 'MINUTES') {
+            waitForQualityGate abortPipeline: true
+        }
+    }
+}
+```
+
+## Troubleshooting
+
+### Common Issues
+
+1. **SonarQube not accessible:**
+   - Verify Docker containers are running: `docker compose ps`
+   - Check logs: `docker compose logs sonarqube`
+
+2. **Quality Gate timeout:**
+   - Increase timeout in Jenkinsfile
+   - Check webhook configuration: `http://localhost:9000/admin/webhooks`
+
+3. **Token authentication fails:**
+   - Regenerate token and update Jenkins credentials
+   - Ensure correct token format and permissions
+
+4. **Analysis fails:**
+   - Check build.gradle SonarQube configuration
+   - Verify Java 21 compatibility
+   - Run locally: `./gradlew build jacocoTestReport -Dsonar.host.url=http://localhost:9000 sonar`
 
 ---
 
@@ -304,3 +391,4 @@ After successful analysis, you can view:
 - [Jenkins SonarQube Plugin](https://plugins.jenkins.io/sonar/)
 - [Quality Gates Guide](https://docs.sonarqube.org/latest/user-guide/quality-gates/)
 - [SonarQube Rules](https://rules.sonarsource.com/)
+- [Docker Network Configuration](https://docs.docker.com/compose/networking/)

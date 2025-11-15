@@ -78,6 +78,8 @@ services:
     image: sonarqube:community
     container_name: sonarqube
     restart: unless-stopped
+    networks:
+      - devops
     ports:
       - "9000:9000"
     environment:
@@ -97,6 +99,8 @@ services:
     image: postgres:17
     container_name: sonarqube-db
     restart: unless-stopped
+    networks:
+      - devops
     environment:
       - POSTGRES_USER=sonar
       - POSTGRES_PASSWORD=sonar
