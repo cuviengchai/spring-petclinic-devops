@@ -5,20 +5,6 @@ pipeline {
         stage('Checkout') {
             steps {
                 echo 'Checking out Spring PetClinic source code...'
-<<<<<<< Updated upstream
-                checkout scm
-            }
-        }
-
-        stage('View Project Structure') {
-            steps {
-                echo 'Displaying project structure...'
-                sh 'ls -la'
-            }
-        }
-    }
-}
-=======
                 git branch: 'develop', url: 'https://github.com/cuviengchai/spring-petclinic-devops.git'
             }
         }
@@ -104,4 +90,3 @@ pipeline {
         }
     }
 }
->>>>>>> Stashed changes
