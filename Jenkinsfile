@@ -52,6 +52,45 @@ pipeline {
             }
         }
 
+        stage('Run Application') {
+            steps {
+                script {
+                    echo 'Starting Spring Boot application in Docker...'
+                    sh '''
+                        # Stop any existing container
+                        docker stop petclinic-app || true
+                        docker rm petclinic-app || true
+                        
+                        # Find the jar file dynamically
+                        JAR_FILE=$(find build/libs -name "*.jar" -not -path "*plain*" -type f | head -n 1)
+                        echo "Found JAR file: $JAR_FILE"
+                        
+                        # Run the application in Docker container
+                        docker run -d --name petclinic-app \\
+                            -p 8000:8000 \\
+                            -v "${WORKSPACE}":/app \\
+                            -w /app \\
+                            -e JAVA_HOME=/opt/java/openjdk \\
+                            spring-base \\
+                            java -jar "$JAR_FILE" --server.port=8000
+                        
+                        # Wait a bit for startup
+                        sleep 10
+                        
+                        # Check if container is running
+                        if docker ps | grep -q petclinic-app; then
+                            echo "Application is running successfully in Docker"
+                            docker logs petclinic-app | tail -10
+                        else
+                            echo "Application failed to start"
+                            docker logs petclinic-app
+                            exit 1
+                        fi
+                    '''
+                }
+            }
+        }
+
         stage('SonarQube Analysis') {
             steps {
                 script {
