@@ -102,7 +102,7 @@ pipeline {
                             -Dsonar.projectKey=devops-team2 \
                             -Dsonar.projectName=devops-team2 \
                             -Dsonar.host.url=${SONAR_HOST_URL} \
-                            -Dsonar.token=squ_8c3dedd2826e7e23b988bdeeb75d9e543155a53e
+                            -Dsonar.token=${SONAR_AUTH_TOKEN}
                         """
                     }
                 }
