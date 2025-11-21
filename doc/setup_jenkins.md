@@ -334,6 +334,11 @@ pipeline {
 - If we were to modify the Jenkinsfile, we can create a pipeline item and paste the modified Jenkinsfile there to test it out
 
 
+# Testing the spring application
+- The spring application now runs on port 8000, it will be automatcially spun up after the build stage in the Jenkinsfile in a docker container created by the jenkins container
+- You can access it at http://localhost:8000
+![Spring application](pic/jenkins/spring/spring-app.png)
+
 
 ## Additional Resources
 
