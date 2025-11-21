@@ -75,7 +75,7 @@ pipeline {
                             java -jar "$JAR_FILE" --server.port=8000
                         
                         # Wait a bit for startup
-                        sleep 10
+                        sleep 5
                         
                         # Check if container is running
                         if docker ps | grep -q petclinic-app; then
