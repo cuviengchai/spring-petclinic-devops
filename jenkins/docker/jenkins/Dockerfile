@@ -7,7 +7,7 @@ RUN apt-get update && apt-get install -y lsb-release ca-certificates curl && \
     echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] \
     https://download.docker.com/linux/debian $(. /etc/os-release && echo \"$VERSION_CODENAME\") stable" \
     | tee /etc/apt/sources.list.d/docker.list > /dev/null && \
-    apt-get update && apt-get install -y docker-ce-cli && \
+    apt-get update && apt-get install -y docker-ce-cli ansible sshpass vim && \
     apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Install Node.js (required for SonarQube JS/TS/CSS analysis)
@@ -32,4 +32,5 @@ RUN jenkins-plugin-cli --plugins \
     ssh-agent \
     sonar \
     jacoco \
-    htmlpublisher
+    htmlpublisher \
+    ansible
