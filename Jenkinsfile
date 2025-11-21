@@ -60,6 +60,7 @@ pipeline {
                         # Stop any existing container
                         docker stop petclinic-app || true
                         docker rm petclinic-app || true
+                        docker network create devops || true
                         
                         # Find the jar file dynamically
                         JAR_FILE=$(find build/libs -name "*.jar" -not -path "*plain*" -type f | head -n 1)
@@ -67,6 +68,7 @@ pipeline {
                         
                         # Run the application in Docker container
                         docker run -d --name petclinic-app \\
+                            --network devops \\
                             -p 8000:8000 \\
                             -v "${WORKSPACE}":/app \\
                             -w /app \\
@@ -122,6 +124,37 @@ pipeline {
                 }
             }
         }
+        
+        stage('OWASP ZAP Scan') {
+            steps {
+                echo 'Running OWASP ZAP baseline scan...'
+                sh '''
+                    echo "docker ps -a";
+                    docker run --rm \
+                        --network devops \
+                        -v "$PWD/zap-reports:/zap/wrk" \
+                        ghcr.io/zaproxy/zaproxy:stable \
+                        zap-baseline.py \
+                            -t http://petclinic-app:8000 \
+                            -r zap-report.html \
+                            -m 0 || true 
+                '''
+            }
+            post {
+                always {
+                    publishHTML(target: [
+                        allowMissing: false,
+                        keepAll: true,
+                        reportDir: 'zap-reports',
+                        reportFiles: 'zap-report.html',
+                        reportName: 'OWASP ZAP Report'
+                    ])
+                    archiveArtifacts artifacts: 'zap-reports/*', fingerprint: true
+                }
+            }
+        }
+
+
     }
 
     post {

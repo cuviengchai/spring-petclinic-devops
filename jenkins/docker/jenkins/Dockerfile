@@ -31,4 +31,5 @@ RUN jenkins-plugin-cli --plugins \
     "prometheus:819.v50953a_c560dd" \
     ssh-agent \
     sonar \
-    jacoco
+    jacoco \
+    htmlpublisher
