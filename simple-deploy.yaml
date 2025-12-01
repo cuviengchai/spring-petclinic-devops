@@ -1,0 +1,54 @@
+---
+- name: Simple JAR Deploy and Run
+  hosts: myhosts
+  vars:
+    jar_file: "spring-petclinic-4.0.0-SNAPSHOT.jar"
+    app_port: 8080
+    app_dir: "/home/chal/Desktop/petclinic"
+
+  tasks:
+    - name: Create app directory
+      file:
+        path: "{{ app_dir }}"
+        state: directory
+        mode: '0755'
+
+    - name: Copy JAR file
+      copy:
+        src: "build/libs/{{ jar_file }}"
+        dest: "{{ app_dir }}/{{ jar_file }}"
+        mode: '0644'
+
+    - name: Stop existing application (if running)
+      shell: |
+        pkill -f "{{ jar_file }}" || true
+      ignore_errors: yes
+
+    - name: Run JAR application
+      shell: |
+        cd {{ app_dir }}
+        nohup java -jar {{ jar_file }} --server.port={{ app_port }} > app.log 2>&1 &
+      async: 10
+      poll: 0
+
+    - name: Wait for application to start
+      wait_for:
+        port: "{{ app_port }}"
+        delay: 15
+        timeout: 60
+
+    - name: Check if application is running
+      uri:
+        url: "http://{{ ansible_default_ipv4.address }}:{{ app_port }}"
+        method: GET
+        status_code: 200
+      register: app_status
+      retries: 3
+      delay: 5
+
+    - name: Display success message
+      debug:
+        msg: |
+          ✅ Application deployed successfully!
+          🌐 Access at: http://{{ ansible_default_ipv4.address }}:{{ app_port }}
+          📋 Status: {{ app_status.status }}

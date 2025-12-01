@@ -4,7 +4,13 @@ pipeline {
     environment {
         SONAR_HOST_URL = 'http://sonarqube:9000'
     }
-    
+
+    parameters {
+        string(name: 'SOURCE_FILE', defaultValue: 'myfile.txt', description: 'File to copy')
+        string(name: 'DEST_PATH', defaultValue: '/home/chal/Desktop/petclinic/myfile.txt', description: 'Destination path')
+        string(name: 'TARGET_HOST', defaultValue: '192.168.64.4', description: 'Target VM IP')
+    }
+
     stages {
         stage('Setup Git') {
             steps {
@@ -67,7 +73,7 @@ pipeline {
                         docker stop petclinic-app || true
                         docker rm petclinic-app || true
                         docker network create devops || true
-                        
+
                         # Find the jar file dynamically
                         JAR_FILE=$(find build/libs -name "*.jar" -not -path "*plain*" -type f | head -n 1)
                         echo "Found JAR file: $JAR_FILE"
@@ -130,7 +136,7 @@ pipeline {
                 }
             }
         }
-        
+
         stage('OWASP ZAP Scan') {
             steps {
                 script {
@@ -254,6 +260,18 @@ XSLT_EOF
                         fi
                     '''
                 }
+                echo 'Running OWASP ZAP baseline scan...'
+                sh '''
+                    echo "docker ps -a";
+                    docker run --rm \
+                        --network devops \
+                        -v "$PWD/zap-reports:/zap/wrk" \
+                        ghcr.io/zaproxy/zaproxy:stable \
+                        zap-baseline.py \
+                            -t http://petclinic-app:8000 \
+                            -r zap-report.html \
+                            -m 0 || true
+                '''
             }
             post {
                 always {
@@ -272,6 +290,19 @@ XSLT_EOF
                         archiveArtifacts artifacts: 'zap-reports/*', allowEmptyArchive: true, fingerprint: true
                     }
                 }
+            }
+        }
+
+
+
+        stage('Copy Files with Ansible') {
+            steps {
+                ansiblePlaybook(
+                    playbook: 'simple-deploy.yaml',
+                    inventory: 'inventory.ini',
+                    disableHostKeyChecking: true,
+                    colorized: true
+                )
             }
         }
     }
