@@ -15,7 +15,7 @@ pipeline {
     stages {
         stage('Setup Git') {
             steps {
-                echo 'Dec 1 check 1'
+                echo 'Dec 1 check 2'
                 echo 'Configuring Git safe directory...'
                 sh 'git config --global --add safe.directory "*"'
             }
