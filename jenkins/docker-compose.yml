@@ -81,6 +81,7 @@ services:
     image: sonarqube:community
     container_name: sonarqube
     restart: unless-stopped
+    shm_size: "2gb" 
     networks:
       - devops
     ports:
@@ -99,9 +100,10 @@ services:
 
   # PostgreSQL Database for SonarQube
   sonarqube-db:
-    image: postgres:17
+    image: postgres:16
     container_name: sonarqube-db
     restart: unless-stopped
+    shm_size: "2gb" 
     networks:
       - devops
     environment:
