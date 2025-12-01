@@ -3,12 +3,13 @@ pipeline {
 
     environment {
         SONAR_HOST_URL = 'http://sonarqube:9000'
+        ANSIBLE_SSH_ARGS = "-o ControlMaster=no -o ControlPersist=0"
     }
 
     parameters {
         string(name: 'SOURCE_FILE', defaultValue: 'myfile.txt', description: 'File to copy')
-        string(name: 'DEST_PATH', defaultValue: '/home/chal/Desktop/petclinic/myfile.txt', description: 'Destination path')
-        string(name: 'TARGET_HOST', defaultValue: '192.168.64.4', description: 'Target VM IP')
+        string(name: 'DEST_PATH', defaultValue: '/home/devops/Desktop/petclinic/myfile.txt', description: 'Destination path')
+        string(name: 'TARGET_HOST', defaultValue: '192.168.64.8', description: 'Target VM IP')
     }
 
     stages {

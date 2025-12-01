@@ -4,7 +4,7 @@
   vars:
     jar_file: "spring-petclinic-4.0.0-SNAPSHOT.jar"
     app_port: 8080
-    app_dir: "/home/chal/Desktop/petclinic"
+    app_dir: "/home/devops/Desktop/petclinic"
 
   tasks:
     - name: Create app directory
