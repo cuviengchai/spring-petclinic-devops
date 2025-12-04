@@ -77,7 +77,7 @@ The major components related to the devops pipeline are under these directories:
 
 ### 1. 🔧 Jenkins CI/CD Server
 
-**[📄 Jenkins Setup Guide](setup_jenkins.md)**
+**[📄 Jenkins Setup Guide](doc/setup_jenkins.md)**
 
 Set up Jenkins for continuous integration and deployment, including:
 
@@ -99,7 +99,7 @@ Set up Jenkins for continuous integration and deployment, including:
 
 ### 2. 📊 Code Quality Analysis
 
-**[📄 SonarQube Setup Guide](setup_sonarqube.md)**
+**[📄 SonarQube Setup Guide](doc/setup_sonarqube.md)**
 
 Implement automated code quality analysis and quality gates:
 
@@ -121,7 +121,7 @@ Implement automated code quality analysis and quality gates:
 
 ### 3. 📈 Monitoring & Observability
 
-**[📄 Prometheus & Grafana Setup Guide](setup_prometheus_grafana.md)**
+**[📄 Prometheus & Grafana Setup Guide](doc/setup_prometheus_grafana.md)**
 
 Set up comprehensive monitoring and visualization:
 
@@ -143,7 +143,7 @@ Set up comprehensive monitoring and visualization:
 
 ### 4. 🤖 Automated Deployment
 
-**[📄 Ansible VM Setup Guide](setup_vm_ansible.md)**
+**[📄 Ansible VM Setup Guide](doc/setup_vm_ansible.md)**
 
 Configure automated deployment using Ansible:
 
@@ -165,7 +165,7 @@ Configure automated deployment using Ansible:
 
 ### 5. 🔒 Security Testing (Coming Soon)
 
-**[📄 OWASP ZAP Setup Guide](setup_zap.md)**
+**[📄 OWASP ZAP Setup Guide](doc/setup_zap.md)**
 
 Implement automated security testing:
 
@@ -197,12 +197,11 @@ To get started with the complete DevOps pipeline:
 
 ### Installation Order
 
-1. **Start with Jenkins** - [Jenkins Setup Guide](setup_jenkins.md)
-2. **Add Code Quality** - [SonarQube Setup Guide](setup_sonarqube.md)  
-3. **Enable Monitoring** - [Prometheus & Grafana Setup Guide](setup_prometheus_grafana.md)
-4. **Configure Deployment** - [Ansible VM Setup Guide](setup_vm_ansible.md)
-5. **Add Security Testing** - [OWASP ZAP Setup Guide](setup_zap.md)
-
+1. **Start with Jenkins** - [Jenkins Setup Guide](doc/setup_jenkins.md)
+2. **Add Code Quality** - [SonarQube Setup Guide](doc/setup_sonarqube.md)  
+3. **Enable Monitoring** - [Prometheus & Grafana Setup Guide](doc/setup_prometheus_grafana.md)
+4. **Configure Deployment** - [Ansible VM Setup Guide](doc/setup_vm_ansible.md)
+5. **Add Security Testing** - [OWASP ZAP Setup Guide](doc/setup_zap.md)
 ### Verification Steps
 
 After completing all setups, verify your pipeline:
@@ -211,7 +210,7 @@ After completing all setups, verify your pipeline:
 2. **📊 SonarQube**: Access at `http://localhost:9000`
 3. **📈 Prometheus**: Access at `http://localhost:9090`
 4. **📊 Grafana**: Access at `http://localhost:3000`
-5. **🌐 Application**: Access at VM IP on port 8080 ![Final Result](pic/jenkins/spring/spring-vm-deploy.png)
+5. **🌐 Application**: Access at VM IP on port 8080 ![Final Result](doc/pic/jenkins/spring/spring-vm-deploy.png)
 
 
 ---
