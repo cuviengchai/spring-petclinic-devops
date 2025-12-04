@@ -67,13 +67,12 @@ Follow these comprehensive guides to set up your complete DevOps pipeline:
 
 ### 0. Major DevOps Components
 The major components related to the devops pipeline are under these directories:
-- doc/ (Here's where the docs are)
-- jenkins/ (Here's where the configuration scripts are)
-- automated_script/ (We have some helper scripts here) 
-- ansible.cfg (Ansible configuration file)
-- Jenkinsfile (Jenkins pipeline as code file)
-- simple-deploy.yml (Ansible playbook for deployment)
-
+- [doc/](doc/) (Here's where the docs are)
+- [jenkins/](jenkins/) (Here's where the configuration scripts are)
+- [automated_script/](automated_script/) (We have some helper scripts here) 
+- [ansible.cfg](ansible.cfg) (Ansible configuration file)
+- [Jenkinsfile](Jenkinsfile) (Jenkins pipeline as code file)
+- [simple-deploy.yml](simple-deploy.yml) (Ansible playbook for deployment)
 
 ### 1. 🔧 Jenkins CI/CD Server
 
