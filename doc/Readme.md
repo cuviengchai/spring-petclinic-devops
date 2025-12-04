@@ -65,6 +65,16 @@ flowchart TB
 
 Follow these comprehensive guides to set up your complete DevOps pipeline:
 
+### 0. Major DevOps Components
+The major components related to the devops pipeline are under these directories:
+- doc/ (Here's where the docs are)
+- jenkins/ (Here's where the configuration scripts are)
+- automated_script/ (We have some helper scripts here) 
+- ansible.cfg (Ansible configuration file)
+- Jenkinsfile (Jenkins pipeline as code file)
+- simple-deploy.yml (Ansible playbook for deployment)
+
+
 ### 1. 🔧 Jenkins CI/CD Server
 
 **[📄 Jenkins Setup Guide](setup_jenkins.md)**
@@ -201,6 +211,7 @@ After completing all setups, verify your pipeline:
 2. **📊 SonarQube**: Access at `http://localhost:9000`
 3. **📈 Prometheus**: Access at `http://localhost:9090`
 4. **📊 Grafana**: Access at `http://localhost:3000`
-5. **🌐 Application**: Access at VM IP on port 8080
+5. **🌐 Application**: Access at VM IP on port 8080 ![Final Result](pic/jenkins/spring/spring-vm-deploy.png)
+
 
 ---
