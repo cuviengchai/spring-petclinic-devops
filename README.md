@@ -74,6 +74,9 @@ The major components related to the devops pipeline are under these directories:
 - [Jenkinsfile](Jenkinsfile) (Jenkins pipeline as code file)
 - [simple-deploy.yml](simple-deploy.yml) (Ansible playbook for deployment)
 
+Link to the presentation video
+- [Click me!](https://youtu.be/KKK7xX2GF5Y)
+
 ### 1. 🔧 Jenkins CI/CD Server
 
 **[📄 Jenkins Setup Guide](doc/setup_jenkins.md)**
