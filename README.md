@@ -6,7 +6,7 @@ This repository contains comprehensive documentation for setting up a complete D
 
 This DevOps implementation transforms the traditional Spring PetClinic application into a modern, production-ready system with automated build, test, quality assurance, security scanning, monitoring, and deployment processes.
 
-###Link to the presentation video
+### Link to the presentation video
 - [Click me!](https://youtu.be/KKK7xX2GF5Y)
 
 ### Architecture Overview
